@@ -103,6 +103,7 @@ const Image = styled.img`
 
 const H2 = styled.h2`
     color: ${(props) => props.theme.color};
+    text-transform: capitalize;
 `
 
 export { PokeList };
