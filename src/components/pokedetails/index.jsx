@@ -4,9 +4,16 @@ import styled from 'styled-components';
 import { useContext } from "react"
 import { ThemeContext } from '../../contexts/theme-context'
 
-async function getPosts(name) {
+async function getPokes(name) {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
     return await response.json()
+}
+
+async function getAbilityDescription(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    const entry = data.flavor_text_entries.find(entry => entry.language.name === 'en');
+    return entry ? entry.flavor_text : 'Description not available';
 }
 
 const PokeDetails = () => {
@@ -16,13 +23,31 @@ const PokeDetails = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const data = await getPosts(name)
+            const data = await getPokes(name)
             console.log(data)
             setPoke(data)
         }
 
         fetchData()
     }, [name])
+
+    const [abilities, setAbilities] = useState([]);
+
+    useEffect(() => {
+        async function fetchAbilities() {
+            const abilitiesWithDescriptions = await Promise.all(
+                poke.abilities.map(async (abilitie) => {
+                    const description = await getAbilityDescription(abilitie.ability.url);
+                    return { name: abilitie.ability.name, description };
+                })
+            );
+            setAbilities(abilitiesWithDescriptions);
+        }
+
+        if (poke.abilities) {
+            fetchAbilities();
+        }
+    }, [poke.abilities]);
 
     const { theme } = useContext(ThemeContext)
 
@@ -45,9 +70,10 @@ const PokeDetails = () => {
                         </Ul>
                         <Ul theme={theme}>
                             <h2>Abilities</h2>
-                            {poke.abilities.map((abilitie, index) =>
+                            {abilities.map((abilitie, index) =>
                                 <Type key={index}>
-                                    <p>{abilitie.ability.name}</p>
+                                    <Abilities>{abilitie.name}</Abilities>
+                                    <div>{abilitie.description}</div>
                                 </Type>
                             )}
                         </Ul>
@@ -83,7 +109,7 @@ const Info = styled.div`
     gap: 50px;
 
     @media (max-width: 768px) {
-        margin-bottom: 70px;
+        margin-bottom: 250px;
         gap: 20px;
     }
 `
@@ -124,9 +150,13 @@ const Type = styled.li`
     color: ${(props) => props.theme.color};
 `
 
+const Abilities = styled.h3`
+    text-transform: capitalize;
+`
+
 const H2 = styled.h2`
     margin: 0 0 30px 50px;
-    text-transform: uppercase;
+    text-transform: capitalize;
     color: ${(props) => props.theme.color};
 `
 
