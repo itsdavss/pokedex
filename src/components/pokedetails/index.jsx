@@ -24,7 +24,6 @@ const PokeDetails = () => {
     useEffect(() => {
         async function fetchData() {
             const data = await getPokes(name)
-            console.log(data)
             setPoke(data)
         }
 
