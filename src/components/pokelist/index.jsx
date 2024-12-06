@@ -44,7 +44,7 @@ const PokeList = () => {
                     </Info>
                 ))}
             </Section>
-            <Button onClick={() => setPokeNumber((prev) => prev + 10)}>Carregar Mais</Button>
+            <Button onClick={() => setPokeNumber((prev) => prev + 10)}>Show more</Button>
         </Div >
     );
 };
