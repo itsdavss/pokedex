@@ -2,6 +2,8 @@
 
 This project allows the user to view Pokémon, their types, abilities, and moves.
 
+## [View the project here](https://pokedex-pi-navy.vercel.app/) ##
+
 ## Glossary
 
 - [Overview](#overview)
